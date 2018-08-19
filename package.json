@@ -4,11 +4,12 @@
   "description": "",
   "main": "dist/Compiler.js",
   "scripts": {
-    "test": "node dist/index"
+    "test": "tsc && node --inspect dist/index"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^10.7.1",
     "typescript": "^3.0.1"
   }
 }

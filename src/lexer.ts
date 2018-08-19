@@ -38,7 +38,7 @@ function describe(word: string, index: number): Token {
   if (word.match(/=|!=|>|<|>=|<=/)) {
     return {
       type: "Comparison",
-      value: word.substring(1, word.length)
+      value: word.substring(0, word.length)
     }
   }
   return {

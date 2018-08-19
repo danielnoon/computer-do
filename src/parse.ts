@@ -1,11 +1,13 @@
 import { Line } from "./lexer";
 
-class Block {
+export class Block {
   lines: (Command | Block)[] = [];
-  constructor(public type: "root" | "loop" | "conditional") {}
+  lineHistory: (Command | Block)[] = [];
+  loopRepeats = 0;
+  constructor(public type: "root" | "loop" | "conditional", public args?: any[]) {}
 }
 
-class Command {
+export class Command {
   constructor(public namespace: string, public method: string, public args: any[]) {}
 }
 
@@ -15,9 +17,23 @@ const blocks = [
 ];
 
 function addBlock(block: Block, lines: Line[]) {
-  for (let line of lines) {
-    if (blocks.indexOf(line.tokens[0].value.toString()) === -1) {
-
+  while (lines.length > 0) {
+    const line = lines.shift()!;
+    const command = line.tokens.shift()!.value.toString();
+    if (command.toLowerCase() === "computer.do.return") return;
+    if (blocks.indexOf(command.toLowerCase()) === -1) {
+      const cmdParts = command.split('.');
+      block.lines.push(new Command(cmdParts[0], cmdParts[2], line.tokens));
+    }
+    else if (command.toLowerCase() === blocks[0]) {
+      const loop = new Block('loop', line.tokens);
+      block.lines.push(loop);
+      addBlock(loop, lines);
+    }
+    else if (command.toLowerCase() === blocks[1]) {
+      const conditional = new Block('conditional', line.tokens);
+      block.lines.push(conditional);
+      addBlock(conditional, lines);
     }
   }
 }
@@ -25,4 +41,5 @@ function addBlock(block: Block, lines: Line[]) {
 export default function parse(lines: Line[]) {
   const program = new Block("root");
   addBlock(program, lines);
+  return program;
 }

@@ -1,6 +1,14 @@
 import lex, { Line } from './lexer';
 import execute from './execute';
 import actions from "./actions";
+import parse, { Block } from "./parse";
+import * as readline from 'readline';
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 
 export class InterpreterOptions {
 
@@ -8,7 +16,7 @@ export class InterpreterOptions {
 
 export class State {
   currentLine = 0;
-  code: Line[] = [];
+  code = new Block('root');
   done = false;
   pause = false;
   namespaces: {
@@ -38,8 +46,8 @@ class Interpreter {
   }
 
   public run(code: string) {
-    this.state.code = lex(code);
-    // execute(this.state);
+    this.state.code = parse(lex(code));
+    execute(this.state);
   }
 }
 
