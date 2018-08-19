@@ -14,5 +14,8 @@ export default {
   },
   mod(state: State, ...args: Token[]) {
     doArithmetic(state, "mod", ...args);
+  },
+  ignore(state: State) {
+    // do nothing. it's a comment
   }
 }

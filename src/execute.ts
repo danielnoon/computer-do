@@ -7,7 +7,7 @@ export default function execute(state: State) {
   const stack: Block[] = [
     state.code
   ];
-  console.log(stack);
+  // console.log(stack);
   while (stack.length > 0) {
     const block = stack[stack.length - 1];
 
@@ -21,8 +21,12 @@ export default function execute(state: State) {
         if (next.type === "conditional") {
           // console.log(next.args![0], next.args![1], next.args![2]);
           const c = compare(state, next.args![0], next.args![1], next.args![2]);
-          console.log(c);
+          // console.log(c);
           if (c) {
+            if (next.lineHistory.length !== 0) {
+              next.lines = next.lineHistory;
+              next.lineHistory = [];
+            }
             stack.push(next);
           }
         }
