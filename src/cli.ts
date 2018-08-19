@@ -2,14 +2,8 @@
 
 import * as program from 'commander';
 import * as fs from 'fs';
-import * as readline from 'readline';
 
 import Interpreter from './Interpreter';
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 program
   .version('0.1.0')
@@ -20,4 +14,4 @@ const file = fs.readFileSync(program.args[0], 'utf-8');
 
 const interpreter = new Interpreter();
 interpreter.run(file);
-process.exit();
+// process.exit();

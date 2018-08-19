@@ -2,12 +2,6 @@ import lex, { Line } from './lexer';
 import execute from './execute';
 import actions from "./actions";
 import parse, { Block } from "./parse";
-import * as readline from 'readline';
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 
 export class InterpreterOptions {
