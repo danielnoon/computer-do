@@ -1,0 +1,14 @@
+{
+  "name": "computer-do",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/Compiler.js",
+  "scripts": {
+    "test": "node dist/index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^3.0.1"
+  }
+}
