@@ -4,16 +4,20 @@ import { Token } from "./lexer";
 export function interpolateString(string: string, state: State) {
   return string.replace(/\$\w+/g, sub => {
     let variable = sub.substring(1, sub.length);
-    return state.variables[variable];
+    return getVar(variable, state);
   });
 }
 
+export function getVar(id: string, state: State) {
+  return state.stack[state.stack.length - 1].variables[id] ? state.stack[state.stack.length - 1].variables[id] : state.variables[id];
+}
+
 export function getStringData(token: Token, state: State) {
-  return token.type === "Identifier" ? state.variables[token.value] : interpolateString(token.value.toString(), state);
+  return token.type === "Identifier" ? getVar(token.value.toString(), state) : interpolateString(token.value.toString(), state);
 }
 
 export function getNumberData(token: Token, state: State) {
-  return token.type === "Identifier" ? state.variables[token.value] : token.value;
+  return token.type === "Identifier" ? getVar(token.value.toString(), state) : token.value;
 }
 
 export function doArithmetic(state: State, type: string, ...args: Token[]) {

@@ -1,12 +1,12 @@
 import { State } from "./Interpreter";
 import { Block, Command } from "./parse";
 import { compare, getNumberData } from "./utils";
+import { Token } from "./lexer";
 
 export default function execute(state: State) {
   let count = 0;
-  const stack: Block[] = [
-    state.code
-  ];
+  const stack = state.stack;
+  stack.push(state.code);
   // console.log(stack);
   const loop = setInterval(() => {
     if (stack.length === 0) {
@@ -25,15 +25,28 @@ export default function execute(state: State) {
         }
         if (next instanceof Block) {
           if (next.type === "conditional") {
-            // console.log(next.args![0], next.args![1], next.args![2]);
             const c = compare(state, next.args![0], next.args![1], next.args![2]);
-            // console.log(c);
             if (c) {
               if (next.lineHistory.length !== 0) {
                 next.lines = next.lineHistory;
                 next.lineHistory = [];
               }
               stack.push(next);
+            }
+          }
+          else if (next.type === "function") {
+            const fname = next.args!.shift()!.value;
+            state.namespaces[next.ns!].DO[fname] = (state: State, ...args: Token[]) => {
+              if (next.lineHistory.length !== 0) {
+                next.lines = next.lineHistory;
+                next.lineHistory = [];
+              }
+              let i = 0;
+              for (let arg of args) {
+                next.variables[next.args![i].value] = arg.value;
+                i++;
+              }
+              state.stack.push(next);
             }
           }
           else {
