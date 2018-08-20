@@ -1,27 +1,5 @@
-Computer.DO.print "Fizz Buzz!"
-Computer.DO.askNum "How many times do you want to repeat? " to $ceil
-Computer.DO.set $num 1
-Computer.DO.loop $ceil times
-  Computer.DO.mod $num 3 to $mod3
-  Computer.DO.mod $num 5 to $mod5
-  Computer.DO.if $mod3 = 0
-    Computer.DO.if $mod5 = 0
-      Computer.DO.print "FizzBuzz"
-    Computer.DO.return
-    Computer.DO.if $mod5 != 0
-      Computer.DO.print "Fizz"
-    Computer.DO.return
-  Computer.DO.return
-  Computer.DO.if $mod5 = 0
-    Computer.DO.if $mod3 != 0
-      Computer.DO.print "Buzz"
-    Computer.DO.return
-  Computer.DO.return
-  Computer.DO.if $mod5 != 0
-    Computer.DO.if $mod3 != 0
-      Computer.DO.multiply $num 1 to $m
-      Computer.DO.print $m
-    Computer.DO.return
-  Computer.DO.return
-  Computer.DO.add $num 1 to $num
-Computer.DO.return
+Computer.DO.namespace Daniel
+Daniel.DO.define sayHello $to
+    Computer.DO.print "Daniel says hi to $to!"
+Daniel.DO.return
+Daniel.DO.sayHello "Christiaan"

@@ -29,6 +29,7 @@ export class State {
   variables: {
     [propName: string]: any
   } = {};
+  stack: Block[] = [];
 }
 
 class Interpreter {

@@ -37,7 +37,7 @@ export default {
         state.variables[identifier.value] = num;
         state.pause = false;
       });
-    }
+    };
     request(question.value.toString());
     // const val = rls.questionFloat(getStringData(question, state));
     // state.variables[identifier.value] = val;
@@ -59,5 +59,12 @@ export default {
   },
   ignore(state: State) {
     // do nothing. it's a comment
+  },
+  namespace(state: State, ns: Token) {
+    if (!state.namespaces.hasOwnProperty(ns.value)) {
+      state.namespaces[ns.value] = {
+        DO: {}
+      }
+    }
   }
 }

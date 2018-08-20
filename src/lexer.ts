@@ -1,4 +1,4 @@
-type TokenType = "Command" | "String" | "Number" | "Identifier" | "Comparison" | "Other";
+type TokenType = "Command" | "String" | "Number" | "Identifier" | "Comparison" | "Boolean" | "Other";
 
 export interface Token {
   type: TokenType;
@@ -41,6 +41,12 @@ function describe(word: string, index: number): Token {
       value: word.substring(0, word.length)
     }
   }
+  if (word === "true" || word === "false") {
+    return {
+      type: "Boolean",
+      value: word
+    }
+  }
   return {
     type: "Other",
     value: word
@@ -48,7 +54,7 @@ function describe(word: string, index: number): Token {
 }
 
 function lex(code: string) {
-  const lines: Line[] = code.split("\n")
+  return code.split("\n")
     .filter(function (t) { return t.length > 0 })
     .map(line => {
       const tokens: Token[] = line.split(/('.*?'|".*?"|\S+)/)
@@ -60,7 +66,6 @@ function lex(code: string) {
         });
       return {tokens};
     });
-  return lines;
 }
 
 export default lex;

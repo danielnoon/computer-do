@@ -1,29 +1,40 @@
-import { Line } from "./lexer";
+import { Line, Token } from "./lexer";
 
 export class Block {
   lines: (Command | Block)[] = [];
   lineHistory: (Command | Block)[] = [];
   loopRepeats = 0;
-  constructor(public type: "root" | "loop" | "conditional", public args?: any[]) {}
+  variables: {
+    [propName: string]: any
+  } = {};
+  constructor(public type: "root" | "loop" | "conditional" | "function", public args?: Token[], public ns?: string) {}
 }
 
 export class Command {
-  constructor(public namespace: string, public method: string, public args: any[]) {}
+  constructor(public namespace: string, public method: string, public args: Token[]) {}
 }
 
 const blocks = [
   "computer.do.loop",
-  "computer.do.if"
+  "computer.do.if",
+  "define"
 ];
 
 function addBlock(block: Block, lines: Line[]) {
   while (lines.length > 0) {
     const line = lines.shift()!;
     const command = line.tokens.shift()!.value.toString();
-    if (command.toLowerCase() === "computer.do.return") return;
+    const cmdParts = command.split('.');
+    if (cmdParts[2].toLowerCase() === "return") return;
     if (blocks.indexOf(command.toLowerCase()) === -1) {
-      const cmdParts = command.split('.');
-      block.lines.push(new Command(cmdParts[0], cmdParts[2], line.tokens));
+      if (cmdParts[2] === blocks[2]) {
+        const func = new Block('function', line.tokens, cmdParts[0]);
+        block.lines.push(func);
+        addBlock(func, lines);
+      }
+      else {
+        block.lines.push(new Command(cmdParts[0], cmdParts[2], line.tokens));
+      }
     }
     else if (command.toLowerCase() === blocks[0]) {
       const loop = new Block('loop', line.tokens);
