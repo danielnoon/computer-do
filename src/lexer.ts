@@ -55,7 +55,7 @@ function describe(word: string, index: number): Token {
 
 function lex(code: string) {
   return code.split("\n")
-    .filter(function (t) { return t.length > 0 })
+    .filter(function (t) { return t.trim().length > 0 })
     .map(line => {
       const tokens: Token[] = line.split(/('.*?'|".*?"|\S+)/)
         .filter(function (t) {

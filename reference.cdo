@@ -1,5 +1,9 @@
 Computer.DO.namespace Daniel
+Computer.DO.set $to "Beni"
+
 Daniel.DO.define sayHello $to
     Computer.DO.print "Daniel says hi to $to!"
 Daniel.DO.return
+
 Daniel.DO.sayHello "Christiaan"
+Computer.DO.print "Daniel says hi to $to!"
