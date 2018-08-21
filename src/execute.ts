@@ -1,13 +1,11 @@
 import { State } from "./Interpreter";
 import { Block, Command } from "./parse";
-import { compare, getNumberData } from "./utils";
+import { compare, getNumberData, getVar } from "./utils";
 import { Token } from "./lexer";
 
 export default function execute(state: State) {
-  let count = 0;
   const stack = state.stack;
   stack.push(state.code);
-  // console.log(stack);
   const loop = setInterval(() => {
     if (stack.length === 0) {
       clearInterval(loop);
@@ -43,7 +41,7 @@ export default function execute(state: State) {
               }
               let i = 0;
               for (let arg of args) {
-                next.variables[next.args![i].value] = arg.value;
+                next.variables[next.args![i].value] = arg.type === "Identifier" ? getVar(arg.value.toString(), state) : arg.value;
                 i++;
               }
               state.stack.push(next);
@@ -61,7 +59,7 @@ export default function execute(state: State) {
       else {
         if (block.type === "loop") {
           const ceiling = getNumberData(block.args![0], state);
-          if (block.loopRepeats >= ceiling) {
+          if (block.loopRepeats >= ceiling - 1) {
             stack.pop();
           }
           else {

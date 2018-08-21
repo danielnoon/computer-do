@@ -1,15 +1,47 @@
 import { State } from "./Interpreter";
 import { Token } from "./lexer";
+import { Block } from "./parse";
 
 export function interpolateString(string: string, state: State) {
   return string.replace(/\$\w+/g, sub => {
     let variable = sub.substring(1, sub.length);
     return getVar(variable, state);
-  });
+  }).replace(/(\\n)/g, "\n").replace(/(\\")/g, "\"");
 }
 
 export function getVar(id: string, state: State) {
-  return state.stack[state.stack.length - 1].variables[id] ? state.stack[state.stack.length - 1].variables[id] : state.variables[id];
+  let found = false;
+  let index = 0;
+  let b: Block = state.stack[0];
+  while (!found) {
+    const block = state.stack[state.stack.length - (index + 1)];
+    if (block.type === "root") {
+      b = block;
+      found = true;
+    }
+    else {
+      if (block.variables[id] !== undefined) {
+        b = block;
+        found = true;
+      }
+    }
+    index++;
+  }
+  return b.variables[id];
+}
+
+export function setVar(id: string, value: any, state: State) {
+  function getScope() {
+    for (let i = 0; i < state.stack.length; i++) {
+      let block = state.stack[state.stack.length - (i + 1)];
+      if (block.type === "function" || block.type === "root") {
+        return block;
+      }
+    }
+    return state.stack[0];
+  }
+  const scope = getScope();
+  scope.variables[id] = value;
 }
 
 export function getStringData(token: Token, state: State) {
@@ -42,8 +74,7 @@ export function doArithmetic(state: State, type: string, ...args: Token[]) {
       value = x % y;
       break;
   }
-
-  state.variables[args[3].value] = value;
+  setVar(args[3].value.toString(), value, state);
 }
 
 export function compare(state: State, left: Token, operator: Token, right: Token) {
