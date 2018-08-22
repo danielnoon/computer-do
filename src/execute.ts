@@ -22,23 +22,20 @@ export default function execute(state: State) {
           state.namespaces[next.namespace].DO[next.method](state, ...next.args);
         }
         if (next instanceof Block) {
+          if (next.lineHistory.length !== 0) {
+            next.lines = next.lineHistory;
+            next.lineHistory = [];
+          }
+          next.loopRepeats = 0;
           if (next.type === "conditional") {
             const c = compare(state, next.args![0], next.args![1], next.args![2]);
             if (c) {
-              if (next.lineHistory.length !== 0) {
-                next.lines = next.lineHistory;
-                next.lineHistory = [];
-              }
               stack.push(next);
             }
           }
           else if (next.type === "function") {
             const fname = next.args!.shift()!.value;
             state.namespaces[next.ns!].DO[fname] = (state: State, ...args: Token[]) => {
-              if (next.lineHistory.length !== 0) {
-                next.lines = next.lineHistory;
-                next.lineHistory = [];
-              }
               let i = 0;
               let foundTo = false;
               for (let arg of args) {
@@ -59,10 +56,6 @@ export default function execute(state: State) {
             }
           }
           else {
-            if (next.lineHistory.length !== 0) {
-              next.lines = next.lineHistory;
-              next.lineHistory = [];
-            }
             stack.push(next);
           }
         }

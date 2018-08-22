@@ -1,12 +1,10 @@
-Computer.DO.define sayHi $to
-  Computer.DO.set $message "Hello, $to!"
-Computer.DO.return $message
-
-Computer.DO.list $names
-Computer.DO.push "Nate" "Matt" "Daniel" "Christiaan" "PJ" "Pat" "Isaac" to $names
-
-Computer.DO.loop 7 times
-  Computer.DO.pop from $names to $name
-  Computer.DO.sayHi $name to $msg
-  Computer.DO.print $msg
+Computer.DO.list $board
+Computer.DO.loop 10 times
+  Computer.DO.list $row
+  Computer.DO.loop 10 times
+    Computer.DO.push "-" to $row
+  Computer.DO.return
+  Computer.DO.push $row to $board
 Computer.DO.return
+
+Computer.DO.print $board
