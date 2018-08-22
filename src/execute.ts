@@ -1,6 +1,6 @@
 import { State } from "./Interpreter";
 import { Block, Command } from "./parse";
-import { compare, getNumberData, getVar } from "./utils";
+import { compare, getNumberData, getVar, getStringData, setVar } from "./utils";
 import { Token } from "./lexer";
 
 export default function execute(state: State) {
@@ -40,9 +40,20 @@ export default function execute(state: State) {
                 next.lineHistory = [];
               }
               let i = 0;
+              let foundTo = false;
               for (let arg of args) {
-                next.variables[next.args![i].value] = arg.type === "Identifier" ? getVar(arg.value.toString(), state) : arg.value;
-                i++;
+                if (arg.type === "Assignment") {
+                  if (arg.value === "to") {
+                    foundTo = true;
+                  }
+                }
+                else if (!foundTo) {
+                  next.variables[next.args![i].value] = arg.type === "Identifier" ? getVar(arg.value.toString(), state) : arg.value;
+                  i++;
+                }
+              }
+              if (foundTo) {
+                next.returnTo = args[args.length - 1];
               }
               state.stack.push(next);
             }
@@ -66,6 +77,19 @@ export default function execute(state: State) {
             block.loopRepeats++;
             block.lines = block.lineHistory;
             block.lineHistory = [];
+          }
+        }
+        else if (block.type === "function") {
+          if (block.returnToken) {
+            const value = block.returnToken.type === "Identifier"
+              ? getVar(block.returnToken.value.toString(), state) 
+              : block.returnToken.type === "String"
+                ? getStringData(block.returnToken, state)
+                : block.returnToken.value
+            stack.pop();
+            if (block.returnTo) {
+              setVar(block.returnTo.value.toString(), value, state);
+            }
           }
         }
         else {

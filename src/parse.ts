@@ -7,6 +7,8 @@ export class Block {
   variables: {
     [propName: string]: any
   } = {};
+  returnToken?: Token;
+  returnTo?: Token;
   constructor(public type: "root" | "loop" | "conditional" | "function", public args?: Token[], public ns?: string) {}
 }
 
@@ -25,7 +27,14 @@ function addBlock(block: Block, lines: Line[]) {
     const line = lines.shift()!;
     const command = line.tokens.shift()!.value.toString();
     const cmdParts = command.split('.');
-    if (cmdParts[2].toLowerCase() === "return") return;
+    if (cmdParts[2].toLowerCase() === "return") {
+      if (block.type === 'function') {
+        if (line.tokens[0]) {
+          block.returnToken = line.tokens[0];
+        }
+      }
+      return;
+    }
     if (blocks.indexOf(command.toLowerCase()) === -1) {
       if (cmdParts[2] === blocks[2]) {
         const func = new Block('function', line.tokens, cmdParts[0]);

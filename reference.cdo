@@ -1,13 +1,12 @@
-Computer.DO.namespace Daniel
+Computer.DO.define sayHi $to
+  Computer.DO.set $message "Hello, $to!"
+Computer.DO.return $message
 
-Daniel.DO.define sayHello $to
-  Computer.DO.print "Daniel says \"Hi!\" to $to."
-Daniel.DO.return
-
-Computer.DO.ignore rererrererer return
 Computer.DO.list $names
-Computer.DO.push "Christiaan" "Beni" "Zach" "Sam" "Lonk" to $names
-Computer.DO.loop 5 times
+Computer.DO.push "Nate" "Matt" "Daniel" "Christiaan" "PJ" "Pat" "Isaac" to $names
+
+Computer.DO.loop 7 times
   Computer.DO.pop from $names to $name
-  Daniel.DO.sayHello $name
+  Computer.DO.sayHi $name to $msg
+  Computer.DO.print $msg
 Computer.DO.return
