@@ -5,7 +5,15 @@ import parse, { Block } from "./parse";
 
 
 export class InterpreterOptions {
+  module = false;
+}
 
+export interface Namespaces {
+  [propName: string]: {
+    DO: {
+      [propName: string]: (state: State, ...args: any[]) => any
+    }
+  }
 }
 
 export class State {
@@ -13,13 +21,8 @@ export class State {
   code = new Block('root');
   done = false;
   pause = false;
-  namespaces: {
-    [propName: string]: {
-      DO: {
-        [propName: string]: (state: State, ...args: any[]) => any
-      }
-    }
-  } = {
+  isModule = false;
+  namespaces: Namespaces = {
     Computer: {
       DO: {
         ...actions
@@ -30,6 +33,7 @@ export class State {
     [propName: string]: any
   } = {};
   stack: Block[] = [];
+  exports: Namespaces = {};
 }
 
 class Interpreter {
@@ -42,7 +46,10 @@ class Interpreter {
 
   public run(code: string) {
     this.state.code = parse(lex(code));
-    execute(this.state);
+    if (this.options.module) {
+      this.state.isModule = true;
+    }
+    return execute(this.state);
   }
 }
 

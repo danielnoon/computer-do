@@ -1,5 +1,5 @@
 import { State } from "./Interpreter";
-import { Token } from "./lexer";
+import { Token, TokenType } from "./lexer";
 import { Block } from "./parse";
 
 export function interpolateString(string: string, state: State) {
@@ -95,4 +95,14 @@ export function compare(state: State, left: Token, operator: Token, right: Token
     case "<=":
       return left <= right;
   }
+}
+
+export function check(token: Token, type: TokenType, value?: any) {
+  if (token.type === type) {
+    if (value) {
+      return token.value === value;
+    }
+    else return true;
+  }
+  else return false;
 }

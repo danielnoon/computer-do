@@ -1,7 +1,7 @@
-import { State } from "./Interpreter";
+import Interpreter, { Namespaces, State } from "./Interpreter";
 import { Token } from "./lexer";
-import { doArithmetic, getStringData, setVar, getVar, getNumberData } from "./utils";
-// import * as rls from 'readline-sync';
+import { doArithmetic, getStringData, setVar, getVar, getNumberData, check } from "./utils";
+import * as fs from 'fs';
 import * as readline from 'readline';
 
 const rl = readline.createInterface({
@@ -65,6 +65,24 @@ export default {
   mod(state: State, ...args: Token[]) {
     doArithmetic(state, "mod", ...args);
   },
+  randomInt(state: State, between: Token, minT: Token, and: Token, maxT: Token, to: Token, variable: Token) {
+    if (check(between, "Assignment", "between")) {
+      if (check(minT, "Number")) {
+        if (check(and, "Assignment", "and")) {
+          if (check(maxT, "Number")) {
+            if (check(to, "Assignment", "to")) {
+              if (check(variable, "Identifier")) {
+                const min = (<number>minT.value);
+                const max = (<number>maxT.value);
+                const val = Math.floor(Math.random() * (max - min + 1)) + min;
+                setVar(variable.value.toString(), val, state);
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   ignore(state: State) {
     // do nothing. it's a comment
   },
@@ -108,13 +126,12 @@ export default {
         if (index.type === "Identifier" || index.type === "Number") {
           if (to.type === "Assignment") {
             if (to.value === "to") {
-              if (variable.type === "Identifier") {
+              if (variable.type === "Identifier" || variable.type === "String" || variable.type === "Number") {
                 l[getNumberData(index, state)] = variable.type === "Identifier"
                   ? getVar(variable.value.toString(), state) 
                   : variable.type === "String"
                     ? getStringData(variable, state)
-                    : variable.value
-                console.log(l);
+                    : variable.value;
               }
             }
           }
@@ -164,6 +181,26 @@ export default {
             }
           }
         }
+      }
+    }
+  },
+  export(state: State, namespace: Token) {
+    state.exports[namespace.value] = state.namespaces[namespace.value];
+  },
+  import(state: State, namespace: Token, from: Token, file: Token) {
+    if (file.type === "String") {
+      const code = fs.readFileSync(file.value.toString(), 'utf-8');
+      if (code) {
+        state.pause = true;
+        const interp = new Interpreter({module: true});
+        interp.run(code).then((namespaces: Namespaces) => {
+          for (let namespace in namespaces) {
+            if (namespaces.hasOwnProperty(namespace)) {
+              state.namespaces[namespace] = namespaces[namespace];
+            }
+          }
+          state.pause = false;
+        })
       }
     }
   }

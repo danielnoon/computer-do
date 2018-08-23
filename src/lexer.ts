@@ -1,4 +1,4 @@
-type TokenType = "Command" | "String" | "Number" | "Identifier" | "Comparison" | "Boolean" | "Assignment" | "Other";
+export type TokenType = "Command" | "String" | "Number" | "Identifier" | "Comparison" | "Boolean" | "Assignment" | "Other";
 
 export interface Token {
   type: TokenType;
@@ -47,7 +47,7 @@ function describe(word: string, index: number): Token {
       value: word
     }
   }
-  if (word === "to" || word === "from") {
+  if (word === "to" || word === "from" || word === "between" || word === "and") {
     return {
       type: "Assignment",
       value: word

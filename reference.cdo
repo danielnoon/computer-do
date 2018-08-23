@@ -9,4 +9,4 @@ Computer.DO.return
 
 Computer.DO.getItem from $board 0 to $row1
 Computer.DO.setItem $row1 4 to "*"
-Computer.DO.print $row1
+Computer.DO.print $board
