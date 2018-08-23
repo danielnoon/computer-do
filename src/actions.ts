@@ -78,6 +78,50 @@ export default {
   list(state: State, name: Token) {
     setVar(name.value.toString(), [], state);
   },
+  getItem(state: State, from: Token, list: Token, index: Token, to: Token, variable: Token) {
+    if (from.type === "Assignment") {
+      if (from.value === "from") {
+        if (list.type === "Identifier") {
+          const l = getVar(list.value.toString(), state);
+          if (l instanceof Array) {
+            if (index.type === "Identifier" || index.type === "Number") {
+              let item = l[getNumberData(index, state)];
+              if (item) {
+                if (to.type === "Assignment") {
+                  if (to.value === "to") {
+                    if (variable.type === "Identifier") {
+                      setVar(variable.value.toString(), item, state);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  setItem(state: State, list: Token, index: Token, to: Token, variable: Token) {
+    if (list.type === "Identifier") {
+      const l = getVar(list.value.toString(), state);
+      if (l instanceof Array) {
+        if (index.type === "Identifier" || index.type === "Number") {
+          if (to.type === "Assignment") {
+            if (to.value === "to") {
+              if (variable.type === "Identifier") {
+                l[getNumberData(index, state)] = variable.type === "Identifier"
+                  ? getVar(variable.value.toString(), state) 
+                  : variable.type === "String"
+                    ? getStringData(variable, state)
+                    : variable.value
+                console.log(l);
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   push(state: State, ...tokens: Token[]) {
     let newData = [];
     let reachedTo = false;
