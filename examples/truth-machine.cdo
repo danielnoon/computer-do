@@ -1,0 +1,12 @@
+Computer.DO.prompt "Please enter 1 or 0: " -> input
+
+if input = "0" DO {
+  Computer.DO.print 0
+  Computer.DO.exit
+} else if input = "1" DO {
+  Computer.DO.loop (infinity times) (fn {
+    Computer.DO.print 1
+  })
+} else DO {
+  Computer.DO.print "Invalid input"
+}

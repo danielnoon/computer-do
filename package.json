@@ -13,8 +13,11 @@
   "author": "Daniel Noon",
   "license": "GPL-3.0",
   "dependencies": {
+    "@types/nearley": "^2.11.2",
     "chalk": "^2.4.1",
     "commander": "^2.17.1",
+    "moo": "^0.5.1",
+    "nearley": "^2.20.1",
     "readline-sync": "^1.4.9",
     "typescript": "^3.0.1"
   },

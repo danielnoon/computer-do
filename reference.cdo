@@ -1,12 +1,1 @@
-Computer.DO.list $board
-Computer.DO.loop 10 times
-  Computer.DO.list $row
-  Computer.DO.loop 10 times
-    Computer.DO.push "-" to $row
-  Computer.DO.return
-  Computer.DO.push $row to $board
-Computer.DO.return
-
-Computer.DO.getItem from $board 0 to $row1
-Computer.DO.setItem $row1 4 to "*"
-Computer.DO.print $board
+Computer.DO.

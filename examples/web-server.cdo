@@ -1,0 +1,20 @@
+Computer.DO.import "http" -> HTTP
+
+actor MainController {
+  static := fn req {
+    Computer.DO.openFile (Computer.programDir + "/static/" + req["path"]) -> file
+
+    if file DO {
+      File.DO.readText file -> text
+      HTTP.DO.respond req 200 text
+    } else DO {
+      HTTP.DO.respond req 404 "Not found"
+    }
+  }  
+}
+
+HTTP.DO.create 8080 -> server
+
+HTTP.DO.listen server (fn request {
+  MainController.DO.static request
+})
